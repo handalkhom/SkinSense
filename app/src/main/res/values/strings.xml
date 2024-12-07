@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">SkinSense</string>
+    <string name="title_home">Home</string>
+    <string name="title_scan">Scan</string>
+    <string name="title_save">Save</string>
+    <string name="title_profile">Profile</string>
+</resources>

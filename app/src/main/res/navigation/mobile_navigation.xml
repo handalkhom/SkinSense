@@ -15,7 +15,23 @@
         android:id="@+id/navigation_scan"
         android:name="com.capstone.skinsense.ui.scan.ScanFragment"
         android:label="@string/title_scan"
-        tools:layout="@layout/fragment_scan" />
+        tools:layout="@layout/fragment_scan" >
+        <action
+            android:id="@+id/scanResultFragment"
+            app:destination="@id/resultFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/resultFragment"
+        android:name="com.capstone.skinsense.ui.scan.ResultFragment"
+        android:label="ResultFragment">
+        <argument
+            android:name="imageUri"
+            app:argType="string" />
+        <argument
+            android:name="resultText"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_save"

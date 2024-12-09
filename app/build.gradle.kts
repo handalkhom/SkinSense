@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id ("androidx.navigation.safeargs")
 }
 
 android {
@@ -23,13 +24,27 @@ android {
     }
 
     buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+        getByName("debug") {
+            // Menambahkan BASE_URL ke BuildConfig untuk debug build
+            buildConfigField("String", "BASE_URL", "\"${project.findProperty("baseUrl") ?: "https://default-url.com"}\"")
+            // Menambahkan IS_DEBUG ke BuildConfig untuk debug build
+            buildConfigField("Boolean", "IS_DEBUG", "true")
         }
+        getByName("release") {
+            // Menambahkan BASE_URL ke BuildConfig untuk release build
+            buildConfigField("String", "BASE_URL", "\"${project.findProperty("baseUrl") ?: "https://default-url.com"}\"")
+            // Menambahkan IS_DEBUG ke BuildConfig untuk release build
+            buildConfigField("Boolean", "IS_DEBUG", "false")
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+//        release {
+//            isMinifyEnabled = false
+//            proguardFiles(
+//                getDefaultProguardFile("proguard-android-optimize.txt"),
+//                "proguard-rules.pro"
+//            )
+//        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8

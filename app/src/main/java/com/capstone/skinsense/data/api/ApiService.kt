@@ -9,6 +9,7 @@ import com.capstone.skinsense.data.response.SkinListResponse
 import com.capstone.skinsense.data.response.UserDetailResponse
 import com.capstone.skinsense.data.response.UserListResponse
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
@@ -26,7 +27,8 @@ interface ApiService {
     @Multipart
     @POST("skin/predict")
     suspend fun uploadImage(
-        @Part file: MultipartBody.Part
+        @Part file: MultipartBody.Part,
+        @Part("user_id") userId: RequestBody
     ): PredictResponse
 
 //    SkinSense Start Here

@@ -18,9 +18,11 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.capstone.skinsense.R
+import com.capstone.skinsense.data.TokenPreferences
 import com.capstone.skinsense.data.api.ApiConfig
 import com.capstone.skinsense.data.response.FileUploadResponse
 import com.capstone.skinsense.databinding.FragmentScanBinding
@@ -32,6 +34,7 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.HttpException
 
 class ScanFragment : Fragment() {
@@ -40,6 +43,7 @@ class ScanFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: ScanViewModel
+    private lateinit var tokenPreferences: TokenPreferences
 
     private val requestPermissionLauncher =
         registerForActivityResult(
@@ -69,6 +73,9 @@ class ScanFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Initailize TokenPreferences
+        tokenPreferences = TokenPreferences(requireContext())
+
         // Initialize ViewModel
         viewModel = ViewModelProvider(this)[ScanViewModel::class.java]
 
@@ -85,8 +92,7 @@ class ScanFragment : Fragment() {
 
         binding.galleryButton.setOnClickListener { startGallery() }
         binding.cameraButton.setOnClickListener { startCamera() }
-//        binding.cameraXButton.setOnClickListener { startCameraX() }
-        binding.uploadButton.setOnClickListener { uploadImage() }
+        binding.uploadButton.setOnClickListener { uploadImage("1") }
     }
 
     private fun startGallery() {
@@ -117,71 +123,49 @@ class ScanFragment : Fragment() {
         }
     }
 
-//    private fun startCameraX() {
-//        val intent = Intent(requireContext(), CameraActivity::class.java)
-//        launcherIntentCameraX.launch(intent)
-//    }
-
-//    private val launcherIntentCameraX = registerForActivityResult(
-//        ActivityResultContracts.StartActivityForResult()
-//    ) {
-//        if (it.resultCode == CAMERAX_RESULT) {
-//            val uri = it.data?.getStringExtra(CameraActivity.EXTRA_CAMERAX_IMAGE)?.toUri()
-//            viewModel.setImageUri(uri)
-//        }
-//    }
-
     private fun showImage(uri: Uri) {
         Log.d("Image URI", "showImage: $uri")
         binding.previewImageView.setImageURI(uri)
     }
 
-    private fun uploadImage() {
-        viewModel.currentImageUri.value?.let { uri ->
-            val imageFile = uriToFile(uri,  requireContext()).reduceFileImage()
-            Log.d("Image Classification File", "showImage: ${imageFile.path}")
-            showLoading(true)
-            val requestImageFile = imageFile.asRequestBody("image/jpeg".toMediaType())
-            val multipartBody = MultipartBody.Part.createFormData(
-                "photo",
-                imageFile.name,
-                requestImageFile
-            )
-            lifecycleScope.launch {
-                try {
-                    val apiService = ApiConfig.getApiService()
-                    val successResponse = apiService.uploadImage(multipartBody)
+    private fun uploadImage(userId: String) {
+        tokenPreferences.token.asLiveData().observe(viewLifecycleOwner) { token ->
+            viewModel.currentImageUri.value?.let { uri ->
+                val imageFile = uriToFile(uri,  requireContext()).reduceFileImage()
+    //            Log.d("Image Classification File", "showImage: ${imageFile.path}")
+                showLoading(true)
+                val requestImageFile = imageFile.asRequestBody("image/jpeg".toMediaType())
+                val multipartBody = MultipartBody.Part.createFormData(
+                    "image", // key untuk file gambar
+                    imageFile.name,
+                    requestImageFile
+                )
+                //User ID diubah menjadi RequestBody
+                val userIdBody = userId.toRequestBody("text/plain".toMediaType())
 
-                    successResponse.data?.let { data ->
-//                        binding.resultTextView.text = if (data.isAboveThreshold == true) {
-//                            showToast(successResponse.message.toString())
-//                            String.format("%s with %.2f%%", data.result, data.confidenceScore)
-//                        } else {
-//                            showToast("Model is predicted successfully but under threshold.")
-//                            String.format("Please use the correct picture because  the confidence score is %.2f%%", data.confidenceScore)
-//                        }
+                lifecycleScope.launch {
+                    try {
+                        val apiService = ApiConfig.getApiService()
+                        val successResponse = apiService.uploadImage(multipartBody, userIdBody)
 
-                        // Send ResultTextView to ResultFragment
-                        val resultText = if (data.isAboveThreshold == true) {
-                            String.format("%s with %.2f%%", data.result, data.confidenceScore)
-                        } else {
-                            String.format("Confidence score: %.2f%%. Please upload a better image.", data.confidenceScore)
+                        successResponse.data?.let { data ->
+                            val resultText = String.format("%s with %.2f%%", data.result, data.confidenceScore)
+                            // Navigate to ResultFragment with arguments
+                            val action = ScanFragmentDirections.scanResultFragment(
+                                uri.toString(),resultText
+                            )
+                            findNavController().navigate(action)
                         }
-                        // Navigate to ResultFragment with arguments
-                        val action = ScanFragmentDirections.scanResultFragment(
-                            uri.toString(),resultText
-                        )
-                        findNavController().navigate(action)
+                        showLoading(false)
+                    } catch (e: HttpException) {
+                        val errorBody = e.response()?.errorBody()?.string()
+                        val errorResponse = Gson().fromJson(errorBody, FileUploadResponse::class.java)
+                        showToast(errorResponse.message.toString())
+                        showLoading(false)
                     }
-                    showLoading(false)
-                } catch (e: HttpException) {
-                    val errorBody = e.response()?.errorBody()?.string()
-                    val errorResponse = Gson().fromJson(errorBody, FileUploadResponse::class.java)
-                    showToast(errorResponse.message.toString())
-                    showLoading(false)
                 }
-            }
-        } ?: showToast(getString(R.string.empty_image_warning))
+            } ?: showToast(getString(R.string.empty_image_warning))
+        }
     }
 
     private fun showLoading(isLoading: Boolean) {

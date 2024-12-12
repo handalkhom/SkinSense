@@ -45,8 +45,7 @@ class ScanFragment : Fragment() {
     private lateinit var viewModel: ScanViewModel
     private lateinit var tokenPreferences: TokenPreferences
 
-    private val requestPermissionLauncher =
-        registerForActivityResult(
+    private val requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
@@ -55,12 +54,6 @@ class ScanFragment : Fragment() {
                 Toast.makeText(requireContext(), "Permission request denied", Toast.LENGTH_LONG).show()
             }
         }
-
-    private fun allPermissionsGranted() =
-        ContextCompat.checkSelfPermission(
-            requireContext(),
-            REQUIRED_PERMISSION
-        ) == PackageManager.PERMISSION_GRANTED
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -86,12 +79,30 @@ class ScanFragment : Fragment() {
             }
         }
 
-        if (!allPermissionsGranted()) {
-            requestPermissionLauncher.launch(REQUIRED_PERMISSION)
+        binding.galleryButton.setOnClickListener {
+            // Check for permission
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                startGallery()
+            }else{
+                requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+            }
         }
-
-        binding.galleryButton.setOnClickListener { startGallery() }
-        binding.cameraButton.setOnClickListener { startCamera() }
+        binding.cameraButton.setOnClickListener {
+            // Check for permission
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.CAMERA
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                startCamera()
+            } else {
+                requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+        }
         binding.uploadButton.setOnClickListener { uploadImage("1") } //just dummy params, change to get userID from datastore
     }
 
@@ -132,7 +143,6 @@ class ScanFragment : Fragment() {
         tokenPreferences.token.asLiveData().observe(viewLifecycleOwner) { token ->
             viewModel.currentImageUri.value?.let { uri ->
                 val imageFile = uriToFile(uri,  requireContext()).reduceFileImage()
-    //            Log.d("Image Classification File", "showImage: ${imageFile.path}")
                 showLoading(true)
                 val requestImageFile = imageFile.asRequestBody("image/jpeg".toMediaType())
                 val multipartBody = MultipartBody.Part.createFormData(
@@ -179,13 +189,8 @@ class ScanFragment : Fragment() {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        private const val REQUIRED_PERMISSION = Manifest.permission.CAMERA
     }
 }

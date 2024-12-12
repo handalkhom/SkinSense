@@ -12,7 +12,8 @@ import com.capstone.skinsense.databinding.ItemPredictionResultBinding
 import com.capstone.skinsense.data.local.PredictionResult
 import okhttp3.internal.format
 
-class SaveAdapter(private val results: MutableList<PredictionResult>) :
+class SaveAdapter(private val results: MutableList<PredictionResult>,
+                  private val onItemClick: (PredictionResult) -> Unit) :
     RecyclerView.Adapter<SaveAdapter.SaveViewHolder>() {
 
     inner class SaveViewHolder(private val binding: ItemPredictionResultBinding) :
@@ -20,13 +21,17 @@ class SaveAdapter(private val results: MutableList<PredictionResult>) :
         fun bind(result: PredictionResult) {
 //            val uri = Uri.parse(result.imageUri) // Ubah string menjadi Uri
             Glide.with(binding.root.context)
-                .load(result.imageUri) // Gantiuri)
+                .load(Uri.parse(result.imageUri))
                 .placeholder(R.drawable.ic_launcher_foreground) // Gambar sementara
                 .error(R.drawable.ic_launcher_background) // Gambar jika ada error
                 .into(binding.imagePreview) // ImageView untuk menampilkan gambar
             binding.resultTextView.text = result.result
 //            val formattedSuggestion = result.suggestion.let { HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY) }
 //            binding.suggestionTextView.text = formattedSuggestion
+
+            binding.root.setOnClickListener {
+                onItemClick(result) // Panggil callback dengan item yang diklik
+            }
         }
 
     }

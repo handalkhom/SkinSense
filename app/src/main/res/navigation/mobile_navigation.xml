@@ -46,7 +46,26 @@
         android:id="@+id/navigation_save"
         android:name="com.capstone.skinsense.ui.save.SaveFragment"
         android:label="@string/title_save"
-        tools:layout="@layout/fragment_save" />
+        tools:layout="@layout/fragment_save">
+        <action
+            android:id="@+id/action_saveFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.capstone.skinsense.ui.save.DetailFragment"
+        android:label="Detail">
+        <argument
+            android:name="imageUri"
+            app:argType="string" />
+        <argument
+            android:name="result"
+            app:argType="string" />
+        <argument
+            android:name="suggestion"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_profile"

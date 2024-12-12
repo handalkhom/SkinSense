@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id ("androidx.navigation.safeargs")
+    id("com.google.devtools.ksp") version "1.9.0-1.0.13" // Plugin KSP
 }
 
 android {
@@ -23,6 +24,13 @@ android {
         buildConfig = true
     }
 
+    // Tambahkan KSP untuk menghasilkan file Room
+    kotlin {
+        ksp {
+            arg("room.incremental", "true")
+        }
+    }
+
     buildTypes {
         getByName("debug") {
             // Menambahkan BASE_URL ke BuildConfig untuk debug build
@@ -38,13 +46,6 @@ android {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
-//        release {
-//            isMinifyEnabled = false
-//            proguardFiles(
-//                getDefaultProguardFile("proguard-android-optimize.txt"),
-//                "proguard-rules.pro"
-//            )
-//        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -59,6 +60,11 @@ android {
 }
 
 dependencies {
+
+    implementation (libs.androidx.room.runtime)
+    implementation (libs.androidx.room.ktx)
+
+    ksp ("androidx.room:room-compiler:2.5.0")
 
     implementation(libs.androidx.datastore.preferences)
 

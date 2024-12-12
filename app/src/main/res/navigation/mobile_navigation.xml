@@ -31,6 +31,15 @@
         <argument
             android:name="resultText"
             app:argType="string" />
+        <argument
+            android:name="suggestionText"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_resultFragment_to_navigation_scan"
+            app:destination="@id/navigation_scan" />
+        <action
+            android:id="@+id/action_resultFragment_to_navigation_home"
+            app:destination="@id/navigation_home" />
     </fragment>
 
     <fragment

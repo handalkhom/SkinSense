@@ -5,9 +5,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.net.toUri
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.capstone.skinsense.R
+import com.capstone.skinsense.data.local.AppDatabase
+import com.capstone.skinsense.data.local.PredictionResult
 import com.capstone.skinsense.databinding.FragmentResultBinding
+import kotlinx.coroutines.launch
 
 class ResultFragment : Fragment() {
 
@@ -36,10 +42,47 @@ class ResultFragment : Fragment() {
         // Set prediction result
         val resultText = args?.resultText
         binding.resultTextView.text = resultText
+
+        // Set suggestion
+        val suggestionText = args?.suggestionText
+        binding.suggestionTextView.text = suggestionText
+
+        // Handle klik tombol Save
+        binding.saveButton.setOnClickListener {
+            saveResultToLocalDatabase(imageUri.toString(), resultText, suggestionText)
+        }
+
+        // Handle klik tombol Scan Again
+        binding.rescanButton.setOnClickListener {
+            findNavController().navigate(R.id.action_resultFragment_to_navigation_scan)
+        }
+
+        binding.homeButton.setOnClickListener {
+            findNavController().navigate(R.id.action_resultFragment_to_navigation_home)
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
+    private fun saveResultToLocalDatabase(imageUri: String?, result: String?, suggestion: String?) {
+        if (imageUri != null && result != null && suggestion != null) {
+            val database = AppDatabase.getInstance(requireContext())
+            val predictionResult = PredictionResult(
+                imageUri = imageUri,
+                result = result,
+                suggestion = suggestion
+            )
+
+            lifecycleScope.launch {
+                database.predictionResultDao().insert(predictionResult)
+                Toast.makeText(requireContext(), "Prediction saved successfully!", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(requireContext(), "Failed to save. Data is incomplete.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 }

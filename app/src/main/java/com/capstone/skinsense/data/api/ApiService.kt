@@ -18,12 +18,6 @@ import retrofit2.http.Part
 import retrofit2.http.Path
 
 interface ApiService {
-//    @Multipart
-//    @POST("skin-cancer/predict")
-//    suspend fun uploadImage(
-//        @Part file: MultipartBody.Part
-//    ) : FileUploadResponse
-
     @Multipart
     @POST("skin/predict")
     suspend fun uploadImage(

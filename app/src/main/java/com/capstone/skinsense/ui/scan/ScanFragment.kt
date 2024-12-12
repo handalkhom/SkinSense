@@ -92,7 +92,7 @@ class ScanFragment : Fragment() {
 
         binding.galleryButton.setOnClickListener { startGallery() }
         binding.cameraButton.setOnClickListener { startCamera() }
-        binding.uploadButton.setOnClickListener { uploadImage("1") }
+        binding.uploadButton.setOnClickListener { uploadImage("1") } //just dummy params, change to get userID from datastore
     }
 
     private fun startGallery() {
@@ -150,9 +150,12 @@ class ScanFragment : Fragment() {
 
                         successResponse.data?.let { data ->
                             val resultText = String.format("%s with %.2f%%", data.result, data.confidenceScore)
+                            val suggestionText = data.suggestion?: "No Suggestion Availabe"
                             // Navigate to ResultFragment with arguments
                             val action = ScanFragmentDirections.scanResultFragment(
-                                uri.toString(),resultText
+                                uri.toString(),
+                                resultText,
+                                suggestionText
                             )
                             findNavController().navigate(action)
                         }

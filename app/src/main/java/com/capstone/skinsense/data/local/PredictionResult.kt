@@ -8,6 +8,7 @@ data class PredictionResult(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val imageUri: String,
     val result: String,
-    val suggestion: String
+    val suggestion: String,
+    val confidenceScore: Float?
 )
 

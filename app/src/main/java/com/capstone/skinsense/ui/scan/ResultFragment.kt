@@ -44,6 +44,10 @@ class ResultFragment : Fragment() {
         val resultText = args?.resultText
         binding.resultTextView.text = resultText
 
+        // Set confidence score
+        val confidenceScore = args?.confidenceScore
+        binding.confidenceScoreTextView.text = String.format("%.2f%%", confidenceScore)
+
         // Set suggestion
         val suggestionText = args?.suggestionText
         val formattedSuggestion = suggestionText?.let { HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY) }
@@ -51,7 +55,7 @@ class ResultFragment : Fragment() {
 
         // Handle klik tombol Save
         binding.saveButton.setOnClickListener {
-            saveResultToLocalDatabase(imageUri.toString(), resultText, suggestionText)
+            saveResultToLocalDatabase(imageUri.toString(), resultText, suggestionText, confidenceScore)
         }
 
         // Handle klik tombol Scan Again
@@ -69,13 +73,14 @@ class ResultFragment : Fragment() {
         _binding = null
     }
 
-    private fun saveResultToLocalDatabase(imageUri: String?, result: String?, suggestion: String?) {
-        if (imageUri != null && result != null && suggestion != null) {
+    private fun saveResultToLocalDatabase(imageUri: String?, result: String?, suggestion: String?, confidenceScore: Float?) {
+        if (imageUri != null && result != null && suggestion != null && confidenceScore != null) {
             val database = AppDatabase.getInstance(requireContext())
             val predictionResult = PredictionResult(
                 imageUri = imageUri,
                 result = result,
-                suggestion = suggestion
+                suggestion = suggestion,
+                confidenceScore = confidenceScore
             )
 
             lifecycleScope.launch {

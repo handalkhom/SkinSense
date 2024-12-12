@@ -6,17 +6,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.OrientationEventListener
-import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
@@ -159,13 +155,16 @@ class ScanFragment : Fragment() {
                         val successResponse = apiService.uploadImage(multipartBody, userIdBody)
 
                         successResponse.data?.let { data ->
-                            val resultText = String.format("%s with %.2f%%", data.result, data.confidenceScore)
+//                            val resultText = String.format("%s with %.2f%%", data.result, data.confidenceScore)
+                            val resultText = data.result?: "No Result Available"
+                            val confidenceScore = data.confidenceScore?: 0.0
                             val suggestionText = data.suggestion?: "No Suggestion Availabe"
                             // Navigate to ResultFragment with arguments
                             val action = ScanFragmentDirections.scanResultFragment(
                                 uri.toString(),
                                 resultText,
-                                suggestionText
+                                suggestionText,
+                                confidenceScore.toFloat()
                             )
                             findNavController().navigate(action)
                         }

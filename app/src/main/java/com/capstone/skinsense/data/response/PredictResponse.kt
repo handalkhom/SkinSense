@@ -8,7 +8,7 @@ data class Predict(
 	val result: String? = null,
 
 	@field:SerializedName("confidenceScore")
-	val confidenceScore: Any? = null,
+	val confidenceScore: Float? = null,
 
 	@field:SerializedName("suggestion")
 	val suggestion: String? = null,

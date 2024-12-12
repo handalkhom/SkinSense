@@ -26,6 +26,12 @@ class SaveAdapter(private val results: MutableList<PredictionResult>,
                 .error(R.drawable.ic_launcher_background) // Gambar jika ada error
                 .into(binding.imagePreview) // ImageView untuk menampilkan gambar
             binding.resultTextView.text = result.result
+            binding.confidenceScoreTextView.text = String.format("%.2f%%", result.confidenceScore)
+            if (result.confidenceScore!! >= 89.0) {
+                binding.statusTextView.text = "Positive"
+            } else {
+                binding.statusTextView.text = "Negative"
+            }
 //            val formattedSuggestion = result.suggestion.let { HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY) }
 //            binding.suggestionTextView.text = formattedSuggestion
 

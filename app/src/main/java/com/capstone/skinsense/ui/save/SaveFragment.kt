@@ -75,7 +75,8 @@ class SaveFragment : Fragment() {
         val action = SaveFragmentDirections.actionSaveFragmentToDetailFragment(
             prediction.imageUri,
             prediction.result,
-            prediction.suggestion
+            prediction.suggestion,
+            prediction.confidenceScore!!
         )
         findNavController().navigate(action)
     }

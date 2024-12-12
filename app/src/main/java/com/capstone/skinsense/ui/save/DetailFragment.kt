@@ -28,6 +28,7 @@ class DetailFragment : Fragment() {
 
         val args = DetailFragmentArgs.fromBundle(requireArguments())
         binding.resultTextView.text = args.result
+        binding.confidenceScoreTextView.text = String.format("%.2f%%", args.confidenceScore)
         val formattedSuggestion = args.suggestion.let { HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY) }
         binding.suggestionTextView.text = formattedSuggestion
 

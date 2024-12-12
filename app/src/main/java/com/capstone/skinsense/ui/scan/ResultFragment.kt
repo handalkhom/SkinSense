@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.net.toUri
+import androidx.core.text.HtmlCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.capstone.skinsense.R
@@ -45,7 +46,8 @@ class ResultFragment : Fragment() {
 
         // Set suggestion
         val suggestionText = args?.suggestionText
-        binding.suggestionTextView.text = suggestionText
+        val formattedSuggestion = suggestionText?.let { HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY) }
+        binding.suggestionTextView.text = formattedSuggestion
 
         // Handle klik tombol Save
         binding.saveButton.setOnClickListener {

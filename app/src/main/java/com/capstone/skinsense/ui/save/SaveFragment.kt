@@ -34,7 +34,7 @@ class SaveFragment : Fragment() {
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@SaveFragment.adapter
-        }
+        }   
 
         // Fetch data from database
         val database = AppDatabase.getInstance(requireContext())

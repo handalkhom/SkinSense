@@ -27,7 +27,7 @@ class SaveAdapter(private val results: MutableList<PredictionResult>,
                 .into(binding.imagePreview) // ImageView untuk menampilkan gambar
             binding.resultTextView.text = result.result
             binding.confidenceScoreTextView.text = String.format("%.2f%%", result.confidenceScore)
-            if (result.confidenceScore!! >= 89.0) {
+            if (result.confidenceScore!! >= 50.0) {
                 binding.statusTextView.text = "Positive"
             } else {
                 binding.statusTextView.text = "Negative"

@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import com.capstone.skinsense.R
 import com.capstone.skinsense.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment() {
@@ -28,9 +30,9 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        // Handle button click
+        binding.tryButton.setOnClickListener {
+            findNavController().navigate(R.id.navigation_scan) // Navigasi ke ScanFragment
         }
         return root
     }

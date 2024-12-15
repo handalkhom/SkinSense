@@ -26,6 +26,7 @@ import com.capstone.skinsense.util.getImageUri
 import com.capstone.skinsense.util.reduceFileImage
 import com.capstone.skinsense.util.uriToFile
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -99,7 +100,22 @@ class ScanFragment : Fragment() {
                 requestPermissionLauncher.launch(Manifest.permission.CAMERA)
             }
         }
-        binding.uploadButton.setOnClickListener { uploadImage("1") } //just dummy params, change to get userID from datastore
+//        binding.uploadButton.setOnClickListener { uploadImage("1") } //just dummy params, change to get userID from datastore
+        binding.uploadButton.setOnClickListener {
+            // Mengambil userId dari DataStore secara asinkron
+            lifecycleScope.launch {
+                val userId = tokenPreferences.userId.firstOrNull() // Ambil userId dari DataStore
+                Log.d("userId", userId.toString())
+                if (userId != null) {
+                    // Panggil fungsi uploadImage dengan userId yang didapat
+                    uploadImage(userId)
+                } else {
+                    // Menangani kasus jika userId tidak ditemukan
+                    Toast.makeText(requireContext(), "User ID not found", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
     }
 
     private fun startGallery() {
@@ -151,7 +167,7 @@ class ScanFragment : Fragment() {
 
                 lifecycleScope.launch {
                     try {
-                        val apiService = ApiConfig.getApiService()
+                        val apiService = ApiConfig.getApiService(requireContext())
                         val successResponse = apiService.uploadImage(multipartBody, userIdBody)
 
                         successResponse.data?.let { data ->

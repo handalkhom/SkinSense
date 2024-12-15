@@ -63,6 +63,8 @@ dependencies {
 
     implementation (libs.androidx.room.runtime)
     implementation (libs.androidx.room.ktx)
+    implementation(libs.androidx.annotation)
+    implementation(libs.androidx.activity)
 
     ksp ("androidx.room:room-compiler:2.5.0")
 

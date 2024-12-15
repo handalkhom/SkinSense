@@ -31,8 +31,6 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
                     getUserIdFromUsername(loginData.username)
 
-//                    saveLoginData(loginData.token ?: "", loginData.email ?: "")
-
                     _loginResult.value = Result.success(loginData)
                 } else {
                     _loginResult.value = Result.failure(Exception(response.message))
@@ -51,6 +49,14 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                 if (user != null) {
                     // Save user_id dari val userId pada response ke DataStore
                     tokenPreferences.saveUserId(user.userId.toString()) // Save user_id
+                    // Save User Profile Info
+                    saveUserProfile(
+                        user.username.toString(),
+                        user.name.toString(),
+                        user.email.toString(),
+                        user.phone.toString()
+                    )
+
                 }
             } catch (e: Exception) {
                 // Handle error if needed
@@ -58,10 +64,9 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun saveLoginData(token: String, userId: String) {
+    private fun saveUserProfile(username: String, name: String, email: String, phone: String) {
         viewModelScope.launch {
-            tokenPreferences.saveToken(token)
-            tokenPreferences.saveUserId(userId)
+            tokenPreferences.saveUserProfile(username, name, email, phone)
         }
     }
 }

@@ -105,7 +105,6 @@ class ScanFragment : Fragment() {
             // Mengambil userId dari DataStore secara asinkron
             lifecycleScope.launch {
                 val userId = tokenPreferences.userId.firstOrNull() // Ambil userId dari DataStore
-                Log.d("userId", userId.toString())
                 if (userId != null) {
                     // Panggil fungsi uploadImage dengan userId yang didapat
                     uploadImage(userId)

@@ -77,17 +77,20 @@ class ScanFragment : Fragment() {
         }
 
         binding.galleryButton.setOnClickListener {
-            // Check for permission
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                // Tidak perlu izin untuk Android 13+
                 startGallery()
-            }else{
-                requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+            } else {
+                // Periksa izin untuk Android 12 atau di bawahnya
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                    startGallery()
+                } else {
+                    requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                }
             }
         }
+
         binding.cameraButton.setOnClickListener {
             // Check for permission
             if (ContextCompat.checkSelfPermission(

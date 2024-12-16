@@ -45,14 +45,22 @@ class SaveFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Check for permission
+        // Periksa izin berdasarkan versi Android
+        val permission = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
+        } else {
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+
+        // Cek izin dan minta izin jika diperlukan
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
-                Manifest.permission.READ_EXTERNAL_STORAGE
+                permission
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+            requestPermissionLauncher.launch(permission)
         }
+
         // Setup RecyclerView
         adapter = SaveAdapter(mutableListOf()) { prediction ->
             navigateToDetailFragment(prediction)

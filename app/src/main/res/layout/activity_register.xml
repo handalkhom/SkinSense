@@ -190,7 +190,7 @@
             android:focusable="true"
             android:text="@string/sign_in"
             android:textAllCaps="false"
-            android:textColor="@color/md_theme_onPrimary"
+            android:textColor="@color/md_theme_onBackground"
             android:textStyle="bold" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

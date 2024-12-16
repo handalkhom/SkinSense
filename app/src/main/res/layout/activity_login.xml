@@ -124,7 +124,7 @@
             android:clickable="true"
             android:focusable="true"
             android:text="@string/sign_up"
-            android:textColor="@color/md_theme_onPrimary"
+            android:textColor="@color/md_theme_onBackground"
             android:textStyle="bold"
             android:textAllCaps="false"
             android:layout_marginLeft="4dp"

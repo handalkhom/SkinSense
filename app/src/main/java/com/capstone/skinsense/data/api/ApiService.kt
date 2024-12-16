@@ -1,10 +1,12 @@
 package com.capstone.skinsense.data.api
 
 import com.capstone.skinsense.data.request.LoginRequest
+import com.capstone.skinsense.data.request.RegisterRequest
 import com.capstone.skinsense.data.response.ApiResponse
 import com.capstone.skinsense.data.response.FileUploadResponse
 import com.capstone.skinsense.data.response.LoginResponse
 import com.capstone.skinsense.data.response.PredictResponse
+import com.capstone.skinsense.data.response.RegisterResponse
 import com.capstone.skinsense.data.response.Skin
 import com.capstone.skinsense.data.response.SkinDetailResponse
 import com.capstone.skinsense.data.response.SkinListResponse
@@ -35,6 +37,11 @@ interface ApiService {
     suspend fun loginUser(
         @Body loginRequest: LoginRequest
     ): LoginResponse
+
+    @POST("users/signup")
+    suspend fun registerUser(
+        @Body registerRequest: RegisterRequest
+    ): RegisterResponse
 
     //Skin
     @GET("skin")

@@ -40,4 +40,16 @@
     <string name="password">password</string>
     <string name="fill_all_fields">Please fill all fields!</string>
     <string name="unknown">Unknown</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <string name="create_account">Create Account</string>
+    <string name="enter_phone_number">Enter phone number</string>
+    <string name="enter_name">Enter name</string>
+    <string name="enter_username">Enter username</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="enter_email">Enter email</string>
+    <string name="registeractivity">RegisterActivity</string>
+    <string name="loading">Loading</string>
+    <string name="register_success">Register Success!</string>
+    <string name="password_mismatch">Password doesn\'t match</string>
+    <string name="enter_password">Enter Password</string>
 </resources>

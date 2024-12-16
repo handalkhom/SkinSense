@@ -14,6 +14,4 @@ data class Login(
 	val username: String? = null
 )
 
-data class LoginRequest(val username: String, val password: String)
-
 typealias LoginResponse = ApiResponse<Login>

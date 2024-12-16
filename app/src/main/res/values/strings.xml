@@ -52,4 +52,5 @@
     <string name="register_success">Register Success!</string>
     <string name="password_mismatch">Password doesn\'t match</string>
     <string name="enter_password">Enter Password</string>
+    <string name="save_fragment_title">Saved Scan</string>
 </resources>
